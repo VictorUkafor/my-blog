@@ -46,7 +46,7 @@ class PostController extends Controller
 
             $uuid = $this->generateUniqueUUID(); 
 
-            $post = new Quizz;
+            $post = new Post;
             $post->user_id = Auth::id();
             $post->uuid = $uuid;
             $post->title = $request->title;
@@ -135,7 +135,7 @@ class PostController extends Controller
             
             if(!$post){
                 return response()->json([
-                    'message' => "Quizz could not be found",
+                    'message' => "Post could not be found",
                     'status' => false,
                 ], 404);
             }

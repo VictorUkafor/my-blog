@@ -13,10 +13,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::group(["namespace"=>"App\Http\Controllers"], function() {
+    
+    Route::get('/', function () { return redirect()->route('login'); });   
+    Auth::routes();
+
+    Route::get('/posts', 'HomeController@index')->name('home');
+
+
+    Route::middleware(['auth'])->group(function () {
+
+        Route::prefix('api')->group(function() {
+
+            Route::post('/posts', 'PostController@create');
+            Route::get('/posts', 'PostController@get');
+            Route::get('/posts/{uuid}', 'PostController@show');
+            Route::put('/posts/{uuid}', 'PostController@edit');
+            Route::delete('/posts/{uuid}', 'PostController@delete');
+
+        });
+
+    });
+
 });
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

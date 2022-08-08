@@ -12,15 +12,15 @@ use Auth, Validator;
 class PostController extends Controller
 {
 
-    public function post(){
+    public function post($uuid){
+        $post = Post::where("uuid", $uuid)->first();
 
-        return view('post');
-
+        return view('post', ['post' => $post]);
     }
 
 
     public function posts(){
-        return view('posts', ['userId' => Auth::id()]);
+        return view('posts');
     }
 
 
@@ -84,7 +84,7 @@ class PostController extends Controller
     public function get(Request $request){
         try {
 
-            $posts = Post::orderBy('id', 'desc')->paginate(20);    
+            $posts = Post::orderBy('id', 'desc')->paginate(1);    
                         
             return response()->json([
                 'posts' => $posts,

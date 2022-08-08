@@ -2717,16 +2717,11 @@ var render = function render() {
       attrs: {
         scope: "row"
       }
-    }, [_vm._v(_vm._s(index + 1 + (_vm.page - 1) * _vm.posts.per_page))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.title))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.description))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.content))]), _vm._v(" "), _c("td", [_c("button", {
+    }, [_vm._v(_vm._s(index + 1 + (_vm.page - 1) * _vm.posts.per_page))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.title))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.description))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.content.slice(0, 20) + "..."))]), _vm._v(" "), _c("td", [_c("a", {
       staticClass: "btn btn-primary",
       attrs: {
-        "data-toggle": "modal",
-        "data-target": "#viewModal"
-      },
-      on: {
-        click: function click($event) {
-          return _vm.viewPost(index);
-        }
+        type: "button",
+        href: "/posts/".concat(post.uuid)
       }
     }, [_vm._v("View")]), _vm._v(" "), _vm.user_id == post.user_id ? _c("button", {
       staticClass: "btn btn-success",
@@ -2753,7 +2748,7 @@ var render = function render() {
       "aria-label": "Page navigation example"
     }
   }, [_c("ul", {
-    staticClass: "pagination"
+    staticClass: "pagination justify-content-center"
   }, [_c("li", {
     staticClass: "page-item"
   }, [_vm.posts.prev_page_url ? _c("a", {

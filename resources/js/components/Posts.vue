@@ -38,11 +38,10 @@
                             <th scope="row">{{(index+1) + ((page - 1)*posts.per_page)}}</th>
                             <td>{{post.title}}</td>
                             <td>{{post.description}}</td>
-                            <td>{{post.content}}</td>
+                            <td>{{((post.content.slice(0, 20))+'...')}}</td>
                             <td>
-                                <button class="btn btn-primary" 
-                                data-toggle="modal" data-target="#viewModal"
-                                @click="viewPost(index)">View</button>
+                                <a type="button" class="btn btn-primary" 
+                                :href="`/posts/${post.uuid}`">View</a>
 
                                 <button class="btn btn-success" v-if="user_id == post.user_id"
                                 data-toggle="modal" data-target="#editModal"
@@ -60,7 +59,7 @@
         </div>
     
         <nav aria-label="Page navigation example" class="mt-3">
-            <ul class="pagination">
+            <ul class="pagination justify-content-center">
                 <li class="page-item">
                     <a class="page-link" v-if="posts.prev_page_url" 
                     @click="paginate(posts.current_page - 1)" aria-label="Previous">

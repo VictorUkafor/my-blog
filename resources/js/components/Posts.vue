@@ -15,7 +15,7 @@
                 <div class="card-header" 
                 style="display:flex;justify-content:space-between;align-items:center">
                     <div>Posts</div>
-                    <button type="button" class="btn btn-success" style="color:#fff"
+                    <button v-if="user_id" type="button" class="btn btn-success" style="color:#fff"
                     data-toggle="modal" data-target="#createModal">
                     Create Post
                     </button>
@@ -29,7 +29,7 @@
                             <th scope="col">Title</th>
                             <th scope="col">Description</th>
                             <th scope="col">Content</th>
-                            <th scope="col">Actions</th>
+                            <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -40,13 +40,16 @@
                             <td>{{post.description}}</td>
                             <td>{{post.content}}</td>
                             <td>
-                                <button class="btn btn-success" 
-                                data-toggle="modal" data-target="#editModal"
-                                @click="editPost(index)">Update</button>
-
                                 <button class="btn btn-primary" 
                                 data-toggle="modal" data-target="#viewModal"
                                 @click="viewPost(index)">View</button>
+
+                                <button class="btn btn-success" v-if="user_id == post.user_id"
+                                data-toggle="modal" data-target="#editModal"
+                                @click="editPost(index)">Update</button>
+
+                                <button class="btn btn-danger" v-if="user_id == post.user_id"
+                                @click="deletePost(post.uuid)">Delete</button>
                             </td>
                             </tr>
                         </tbody>
@@ -114,6 +117,7 @@
 </template>
 
 <script>
+
     import axios from 'axios';
     import ViewPost from './ViewPost.vue';
     import CreatePost from './CreatePost.vue';
@@ -133,8 +137,10 @@
                 selectedPost: {},
                 message: "",
                 error: "",
+                user_id: 0
             }
         },
+        props: ['userId'],
         methods: {
             sendMessage(message){
                 this.message = message;
@@ -176,8 +182,6 @@
             },
             createPost(){
                
-               console.log('clicking....');
-
                 const { 
                     postTitle, 
                     postDescription,
@@ -218,9 +222,26 @@
                     this.$emit("sendError", "Post could be created");
                     this.$refs.removeBtn2.click();
                 });
+            },
+            deletePost(uuid){               
+                this.loading = true;
+                      
+                axios.delete(`/api/posts/${uuid}`)
+                .then((response) => {
+                    this.loading = false;
+                    const message = response.data.message;
+                    this.sendMessage(message)
+                }).catch((err) => {
+                    this.loading = false;
+                    const error = err.response.data.message;
+                    this.sendError(error)
+                });
             }
+        
         },
         mounted() {
+            this.user_id = this.$attrs.userid
+
             this.fetchPosts();
         }
     }

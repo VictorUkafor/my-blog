@@ -2240,9 +2240,11 @@ __webpack_require__.r(__webpack_exports__);
       loading: false,
       selectedPost: {},
       message: "",
-      error: ""
+      error: "",
+      user_id: 0
     };
   },
+  props: ['userId'],
   methods: {
     sendMessage: function sendMessage(message) {
       this.message = message;
@@ -2284,7 +2286,6 @@ __webpack_require__.r(__webpack_exports__);
     createPost: function createPost() {
       var _this2 = this;
 
-      console.log('clicking....');
       var _this$create = this.create,
           postTitle = _this$create.postTitle,
           postDescription = _this$create.postDescription,
@@ -2323,9 +2324,26 @@ __webpack_require__.r(__webpack_exports__);
 
         _this2.$refs.removeBtn2.click();
       });
+    },
+    deletePost: function deletePost(uuid) {
+      var _this3 = this;
+
+      this.loading = true;
+      axios__WEBPACK_IMPORTED_MODULE_0___default()["delete"]("/api/posts/".concat(uuid)).then(function (response) {
+        _this3.loading = false;
+        var message = response.data.message;
+
+        _this3.sendMessage(message);
+      })["catch"](function (err) {
+        _this3.loading = false;
+        var error = err.response.data.message;
+
+        _this3.sendError(error);
+      });
     }
   },
   mounted: function mounted() {
+    this.user_id = this.$attrs.userid;
     this.fetchPosts();
   }
 });
@@ -2671,11 +2689,28 @@ var render = function render() {
     }
   }, [_vm._v("\n                " + _vm._s(_vm.message) + "\n            ")]) : _vm._e(), _vm._v(" "), _c("div", {
     staticClass: "card"
-  }, [_vm._m(0), _vm._v(" "), _c("div", {
+  }, [_c("div", {
+    staticClass: "card-header",
+    staticStyle: {
+      display: "flex",
+      "justify-content": "space-between",
+      "align-items": "center"
+    }
+  }, [_c("div", [_vm._v("Posts")]), _vm._v(" "), _vm.user_id ? _c("button", {
+    staticClass: "btn btn-success",
+    staticStyle: {
+      color: "#fff"
+    },
+    attrs: {
+      type: "button",
+      "data-toggle": "modal",
+      "data-target": "#createModal"
+    }
+  }, [_vm._v("\n                    Create Post\n                    ")]) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "card-body"
   }, [_c("table", {
     staticClass: "table"
-  }, [_vm._m(1), _vm._v(" "), _c("tbody", _vm._l(_vm.posts.data, function (post, index) {
+  }, [_vm._m(0), _vm._v(" "), _c("tbody", _vm._l(_vm.posts.data, function (post, index) {
     return _c("tr", {
       key: post.id
     }, [_c("th", {
@@ -2683,17 +2718,6 @@ var render = function render() {
         scope: "row"
       }
     }, [_vm._v(_vm._s(index + 1 + (_vm.page - 1) * _vm.posts.per_page))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.title))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.description))]), _vm._v(" "), _c("td", [_vm._v(_vm._s(post.content))]), _vm._v(" "), _c("td", [_c("button", {
-      staticClass: "btn btn-success",
-      attrs: {
-        "data-toggle": "modal",
-        "data-target": "#editModal"
-      },
-      on: {
-        click: function click($event) {
-          return _vm.editPost(index);
-        }
-      }
-    }, [_vm._v("Update")]), _vm._v(" "), _c("button", {
       staticClass: "btn btn-primary",
       attrs: {
         "data-toggle": "modal",
@@ -2704,7 +2728,25 @@ var render = function render() {
           return _vm.viewPost(index);
         }
       }
-    }, [_vm._v("View")])])]);
+    }, [_vm._v("View")]), _vm._v(" "), _vm.user_id == post.user_id ? _c("button", {
+      staticClass: "btn btn-success",
+      attrs: {
+        "data-toggle": "modal",
+        "data-target": "#editModal"
+      },
+      on: {
+        click: function click($event) {
+          return _vm.editPost(index);
+        }
+      }
+    }, [_vm._v("Update")]) : _vm._e(), _vm._v(" "), _vm.user_id == post.user_id ? _c("button", {
+      staticClass: "btn btn-danger",
+      on: {
+        click: function click($event) {
+          return _vm.deletePost(post.uuid);
+        }
+      }
+    }, [_vm._v("Delete")]) : _vm._e()])]);
   }), 0)])])])]), _vm._v(" "), _c("nav", {
     staticClass: "mt-3",
     attrs: {
@@ -2828,28 +2870,6 @@ var staticRenderFns = [function () {
   var _vm = this,
       _c = _vm._self._c;
 
-  return _c("div", {
-    staticClass: "card-header",
-    staticStyle: {
-      display: "flex",
-      "justify-content": "space-between",
-      "align-items": "center"
-    }
-  }, [_c("div", [_vm._v("Posts")]), _vm._v(" "), _c("button", {
-    staticClass: "btn btn-success",
-    staticStyle: {
-      color: "#fff"
-    },
-    attrs: {
-      type: "button",
-      "data-toggle": "modal",
-      "data-target": "#createModal"
-    }
-  }, [_vm._v("\n                    Create Post\n                    ")])]);
-}, function () {
-  var _vm = this,
-      _c = _vm._self._c;
-
   return _c("thead", [_c("tr", [_c("th", {
     attrs: {
       scope: "col"
@@ -2870,7 +2890,7 @@ var staticRenderFns = [function () {
     attrs: {
       scope: "col"
     }
-  }, [_vm._v("Actions")])])]);
+  })])]);
 }];
 render._withStripped = true;
 

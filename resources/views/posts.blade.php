@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-<posts />
+<posts :userId="{!! Auth::id() ? Auth::id() : 0 !!}"/>
 @endsection

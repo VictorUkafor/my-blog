@@ -19,19 +19,19 @@ Route::group(["namespace"=>"App\Http\Controllers"], function() {
     Route::get('/', function () { return redirect()->route('login'); });   
     Auth::routes();
 
-    Route::get('/posts', 'HomeController@index')->name('home');
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/posts', 'PostController@posts');
+    Route::get('/posts/{uuid}', 'PostController@post');
 
+    Route::get('/api/posts', 'PostController@get');
+    Route::get('/api/posts/{uuid}', 'PostController@show');
 
     Route::middleware(['auth'])->group(function () {
 
         Route::prefix('api')->group(function() {
-
             Route::post('/posts', 'PostController@create');
-            Route::get('/posts', 'PostController@get');
-            Route::get('/posts/{uuid}', 'PostController@show');
             Route::put('/posts/{uuid}', 'PostController@edit');
             Route::delete('/posts/{uuid}', 'PostController@delete');
-
         });
 
     });

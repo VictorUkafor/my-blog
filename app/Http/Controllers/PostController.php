@@ -12,6 +12,18 @@ use Auth, Validator;
 class PostController extends Controller
 {
 
+    public function post(){
+
+        return view('post');
+
+    }
+
+
+    public function posts(){
+        return view('posts', ['userId' => Auth::id()]);
+    }
+
+
     private function generateUniqueUUID()
     {
         $uids = Post::pluck('uuid')->toArray();
@@ -72,8 +84,7 @@ class PostController extends Controller
     public function get(Request $request){
         try {
 
-            $posts = Post::where("user_id", Auth::id())
-            ->orderBy('id', 'desc')->paginate(20);    
+            $posts = Post::orderBy('id', 'desc')->paginate(20);    
                         
             return response()->json([
                 'posts' => $posts,
@@ -140,6 +151,12 @@ class PostController extends Controller
                 ], 404);
             }
 
+            if($post->user_id !== Auth::id()){
+                return response()->json([
+                    'message' => "You are authorized to perform this action",
+                    'status' => false,
+                ], 401);
+            }
 
             $post->title = $request->title ? 
             $request->title : $post->title;
@@ -177,6 +194,13 @@ class PostController extends Controller
                     'message' => "Post could not be found",
                     'status' => false,
                 ], 404);
+            }
+
+            if($post->user_id !== Auth::id()){
+                return response()->json([
+                    'message' => "You are authorized to perform this action",
+                    'status' => false,
+                ], 401);
             }
 
             $post->delete();
